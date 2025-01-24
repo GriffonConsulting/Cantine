@@ -8,6 +8,19 @@
 
   <ItemGroup>
     <Folder Include="Credit\" />
+    <Folder Include="Invoice\GenerateInvoice\Commands\" />
+    <Folder Include="Invoice\GenerateInvoice\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="MediatR" Version="12.4.1" />
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.12" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Application.Common\Application.Common.csproj" />
+    <ProjectReference Include="..\Domain\Domain.csproj" />
+    <ProjectReference Include="..\Storage\EntityFramework.csproj" />
   </ItemGroup>
 
 </Project>
