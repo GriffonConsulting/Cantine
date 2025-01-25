@@ -2,14 +2,12 @@ using Application.ClientAccounts.Commands.CreditAccount;
 using Application.Common.Requests;
 using EntityFramework.Commands;
 using EntityFramework.Entities;
-using MediatR;
 using Moq;
 
 namespace Application.Tests.ClientAccounts
 {
     public class GetClientTests : UnitTestBase
     {
-        private readonly Mock<IMediator> _mediator = new();
         private readonly CreditAccountCommandHandler _creditAccountCommandHandler;
 
 
@@ -38,6 +36,22 @@ namespace Application.Tests.ClientAccounts
         }
 
         [Fact]
+        public async Task negative_amount_Should_Throw_BadRequestException()
+        {
+            var response = await _creditAccountCommandHandler.Handle(
+                new CreditAccountCommand()
+                {
+                    ProviderId = new Guid(),
+                    CreditAccountClientCommand = new CreditClientCommandDto
+                    {
+                        ClientId = new Guid(),
+                        Amount = -50
+                    }
+                }, new CancellationToken());
+            Assert.True(response.StatusCodes == RequestStatusCodes.Status400BadRequest);
+        }
+
+        [Fact]
         public async Task Unknown_client_Should_Throw_BadRequestException()
         {
             var response = await _creditAccountCommandHandler.Handle(
@@ -57,8 +71,8 @@ namespace Application.Tests.ClientAccounts
         public async Task Should_Be_Ok()
         {
             var clientId = Guid.NewGuid();
-            await DbContextMock.ClientAccount.AddAsync(new ClientAccount { Amount = 50, ClientId = clientId }).ConfigureAwait(false);
-            await DbContextMock.SaveChangesAsync().ConfigureAwait(false);
+            await DbContextMock.ClientAccount.AddAsync(new ClientAccount { Amount = 50, ClientId = clientId });
+            await DbContextMock.SaveChangesAsync();
 
 
             var response = await _creditAccountCommandHandler.Handle(
