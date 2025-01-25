@@ -7,7 +7,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="Credit\" />
     <Folder Include="Invoice\GenerateInvoice\Commands\" />
     <Folder Include="Invoice\GenerateInvoice\" />
   </ItemGroup>

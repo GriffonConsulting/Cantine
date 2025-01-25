@@ -2,7 +2,7 @@
 using Domain.Authorization;
 using MediatR;
 
-namespace Application.Authentication.Commands.SignIn;
+namespace Application.Authenticate.Commands.SignIn;
 
 public class SignInCommand : IRequest<RequestResult<SignInDto>>
 {

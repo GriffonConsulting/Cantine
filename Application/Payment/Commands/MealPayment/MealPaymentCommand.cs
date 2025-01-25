@@ -1,6 +1,15 @@
-﻿namespace Application.Payment.Commands.MealPayment
+﻿using Application.Common.Requests;
+using MediatR;
+
+namespace Application.Payment.Commands.MealPayment;
+
+public class MealPaymentCommand : IRequest<RequestResult<MealPaymentResult>>
 {
-    internal class MealPaymentCommand
-    {
-    }
+    public required Guid ClientId { get; set; }
+    public required MealPaymentCommandDto MealPaymentCommandDto { get; set; }
+}
+
+public class MealPaymentCommandDto
+{
+    public required Guid[] ProducctIds { get; set; }
 }

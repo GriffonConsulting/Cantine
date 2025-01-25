@@ -1,5 +1,5 @@
-﻿using Application.Authentication.Commands.SignIn;
-using Application.Authentication.Commands.SignUp;
+﻿using Application.Authenticate.Commands.SignIn;
+using Application.Authenticate.Commands.SignUp;
 using Application.Common.Requests;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;

@@ -7,7 +7,7 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 
-namespace Application.Authentication.Commands.SignIn
+namespace Application.Authenticate.Commands.SignIn
 {
     public class SignInCommandHandler : IRequestHandler<SignInCommand, RequestResult<SignInDto>>
     {
@@ -59,8 +59,8 @@ namespace Application.Authentication.Commands.SignIn
                 {
                     Token = new JwtSecurityTokenHandler().WriteToken(token),
                     ExpirationDate = token.ValidTo
-                }
-
+                },
+                StatusCodes = RequestStatusCodes.Status200OK              
 
             };
         }

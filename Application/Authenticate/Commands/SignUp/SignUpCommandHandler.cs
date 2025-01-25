@@ -5,17 +5,19 @@ using EntityFramework.Entities;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
 
-namespace Application.Authentication.Commands.SignUp
+namespace Application.Authenticate.Commands.SignUp
 {
     public class SignUpCommandHandler : IRequestHandler<SignUpCommand, RequestResult>
     {
         private readonly UserManager<IdentityUser> _userManager;
-        private readonly ClientCommands _userCommands;
+        private readonly ClientCommands _clientCommands;
+        private readonly ClientAccountCommands _clientAccountCommands;
 
-        public SignUpCommandHandler(UserManager<IdentityUser> userManager, ClientCommands userCommands)
+        public SignUpCommandHandler(UserManager<IdentityUser> userManager, ClientCommands clientCommands, ClientAccountCommands clientAccountCommands)
         {
             _userManager = userManager;
-            _userCommands = userCommands;
+            _clientCommands = clientCommands;
+            _clientAccountCommands = clientAccountCommands;
         }
 
         public async Task<RequestResult> Handle(SignUpCommand request, CancellationToken cancellationToken)
@@ -30,6 +32,7 @@ namespace Application.Authentication.Commands.SignUp
             }
             await _userManager.AddToRoleAsync(user, nameof(UserRoles.User));
             var userId = await _userManager.GetUserIdAsync(user);
+
             var newUser = new Client
             {
                 Id = Guid.Parse(userId),
@@ -38,7 +41,17 @@ namespace Application.Authentication.Commands.SignUp
                 CreatedOn = DateTime.UtcNow,
                 ModifiedOn = DateTime.UtcNow,
             };
-            await _userCommands.AddAsync(newUser, cancellationToken);
+            await _clientCommands.AddAsync(newUser, cancellationToken);
+
+            var newClientAccount = new ClientAccount
+            {
+                Id = Guid.Parse(userId),
+                ClientId = newUser.Id,
+                Amount = 0,
+                CreatedOn = DateTime.UtcNow,
+                ModifiedOn = DateTime.UtcNow,
+            };
+            await _clientAccountCommands.AddAsync(newClientAccount, cancellationToken);
             var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
             await _userManager.ConfirmEmailAsync(user, token);
 

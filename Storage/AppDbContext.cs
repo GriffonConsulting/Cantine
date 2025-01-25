@@ -2,7 +2,6 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using System.Collections.Generic;
 
 namespace EntityFramework
 {
@@ -13,5 +12,9 @@ namespace EntityFramework
         }
 
         public DbSet<Client> Client { get; set; }
+        public DbSet<ClientAccount> ClientAccount { get; set; }
+        public DbSet<ClientAccountTransactionHistory> ClientAccountTransactionHistory { get; set; }
+        public DbSet<MealCare> MealCare { get; set; }
+        public DbSet<Product> Product { get; set; }
     }
 }

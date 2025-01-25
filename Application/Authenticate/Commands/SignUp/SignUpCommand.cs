@@ -2,7 +2,7 @@
 using Domain.Client;
 using MediatR;
 
-namespace Application.Authentication.Commands.SignUp
+namespace Application.Authenticate.Commands.SignUp
 {
     public class SignUpCommand : IRequest<RequestResult>
     {
