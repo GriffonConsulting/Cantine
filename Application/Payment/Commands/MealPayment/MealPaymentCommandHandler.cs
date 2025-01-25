@@ -24,6 +24,7 @@ public class MealPaymentCommandHandler : IRequestHandler<MealPaymentCommand, Req
     public async Task<RequestResult<MealPaymentResult>> Handle(MealPaymentCommand request, CancellationToken cancellationToken)
     {
 
+
         return new RequestResult<MealPaymentResult>
         {
             Result = new MealPaymentResult
