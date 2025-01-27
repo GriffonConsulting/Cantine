@@ -21,7 +21,7 @@ namespace Cantine.Controllers
         [Authorize]
         public async Task<IActionResult> GetInvoice([FromRoute] Guid orderId, CancellationToken cancellationToken)
         {
-            var getInvoiceResult = await _mediator.Send(new GetInvoiceQuery { ClientId = Request.UserId(), OrderId = orderId}, cancellationToken);
+            var getInvoiceResult = await _mediator.Send(new GetInvoiceQuery { ClientId = Request.UserId(), OrderId = orderId }, cancellationToken);
 
 
             return File(getInvoiceResult.Result.FileContent, "application/pdf", getInvoiceResult.Result.Filename);

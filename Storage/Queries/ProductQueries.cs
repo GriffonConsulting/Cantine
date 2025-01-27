@@ -1,5 +1,4 @@
-﻿using Domain.Product;
-using EntityFramework.Entities;
+﻿using EntityFramework.Entities;
 using Microsoft.EntityFrameworkCore;
 
 namespace EntityFramework.Queries

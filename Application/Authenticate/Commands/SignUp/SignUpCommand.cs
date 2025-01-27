@@ -1,5 +1,4 @@
 ﻿using Application.Common.Requests;
-using Domain.Client;
 using MediatR;
 
 namespace Application.Authenticate.Commands.SignUp

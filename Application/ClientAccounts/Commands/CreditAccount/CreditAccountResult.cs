@@ -3,5 +3,5 @@
 public class CreditAccountResult
 {
     public required Guid ClientId { get; set; }
-    public required decimal Amount {  get; set; }
+    public required decimal Amount { get; set; }
 }

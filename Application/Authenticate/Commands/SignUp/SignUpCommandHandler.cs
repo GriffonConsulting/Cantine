@@ -2,7 +2,6 @@
 using Domain.Authorization;
 using EntityFramework.Commands;
 using EntityFramework.Entities;
-using EntityFramework.Queries;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
 

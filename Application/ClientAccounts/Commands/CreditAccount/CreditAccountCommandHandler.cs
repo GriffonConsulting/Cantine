@@ -34,23 +34,24 @@ public class CreditAccountCommandHandler : IRequestHandler<CreditAccountCommand,
 
         await _clientAccountCommands.UpdateEntityAsync(clientAccount, cancellationToken);
         await _clientAccountTransactionHistoryCommands.AddAsync(new ClientAccountTransactionHistory
-            {
-                TransactionAmount = request.CreditAccountClientCommand.Amount,
-                ClientNewAmount = clientAccount.Amount,
-                ClientId = request.CreditAccountClientCommand.ClientId,
-                CreatedOn = DateTime.UtcNow,
-                ModifiedOn = DateTime.UtcNow,
-                UserId = request.UserId,
-            }, cancellationToken);
+        {
+            TransactionAmount = request.CreditAccountClientCommand.Amount,
+            ClientNewAmount = clientAccount.Amount,
+            ClientId = request.CreditAccountClientCommand.ClientId,
+            CreatedOn = DateTime.UtcNow,
+            ModifiedOn = DateTime.UtcNow,
+            UserId = request.UserId,
+        }, cancellationToken);
 
-        return new RequestResult<CreditAccountResult> {
+        return new RequestResult<CreditAccountResult>
+        {
             Result = new CreditAccountResult
-            { 
+            {
                 Amount = clientAccount.Amount,
                 ClientId = request.CreditAccountClientCommand.ClientId,
             },
 
-            StatusCodes = RequestStatusCodes.Status200OK  
+            StatusCodes = RequestStatusCodes.Status200OK
         };
     }
 }

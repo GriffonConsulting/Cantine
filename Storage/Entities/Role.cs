@@ -11,5 +11,6 @@ namespace EntityFramework.Entities
         public bool CanOverDraft { get; set; }
         public DateTime CreatedOn { get; set; }
         public DateTime ModifiedOn { get; set; }
+        public virtual List<Client>? Clients { get; set; }
     }
 }

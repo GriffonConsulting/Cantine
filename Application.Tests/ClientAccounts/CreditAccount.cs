@@ -23,10 +23,10 @@ namespace Application.Tests.ClientAccounts
         [Fact]
         public async Task Zero_amount_Should_Throw_BadRequestException()
         {
-            var response =  await _creditAccountCommandHandler.Handle(
-                new CreditAccountCommand() 
-                { 
-                    UserId = new Guid(), 
+            var response = await _creditAccountCommandHandler.Handle(
+                new CreditAccountCommand()
+                {
+                    UserId = new Guid(),
                     CreditAccountClientCommand = new CreditClientCommandDto
                     {
                         ClientId = new Guid(),

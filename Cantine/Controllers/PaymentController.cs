@@ -1,5 +1,4 @@
-﻿using Application.ClientAccounts.Commands.CreditAccount;
-using Application.Common.Requests;
+﻿using Application.Common.Requests;
 using Application.Payment.Commands.MealPayment;
 using Cantine.Helpers;
 using MediatR;

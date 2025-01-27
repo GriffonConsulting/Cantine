@@ -1,6 +1,4 @@
 ﻿using Application.Common.Requests;
-using Application.Payment.Commands.MealPayment;
-using EntityFramework.Entities;
 using EntityFramework.Queries;
 using MediatR;
 using PdfSharp.Drawing;

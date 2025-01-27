@@ -4,7 +4,6 @@ using EntityFramework.Commands;
 using EntityFramework.Entities;
 using EntityFramework.Queries;
 using MediatR;
-using System.Threading;
 
 namespace Application.Payment.Commands.MealPayment;
 

@@ -60,7 +60,7 @@ namespace Application.Authenticate.Commands.SignIn
                     Token = new JwtSecurityTokenHandler().WriteToken(token),
                     ExpirationDate = token.ValidTo
                 },
-                StatusCodes = RequestStatusCodes.Status200OK              
+                StatusCodes = RequestStatusCodes.Status200OK
 
             };
         }

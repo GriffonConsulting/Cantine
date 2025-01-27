@@ -1,7 +1,5 @@
-using Application.ClientAccounts.Commands.CreditAccount;
 using Application.Common.Requests;
 using Application.Invoice.Queries.GetInvoice;
-using EntityFramework.Commands;
 using EntityFramework.Entities;
 using EntityFramework.Queries;
 using Moq;
@@ -46,7 +44,7 @@ namespace Application.Tests.ClientAccounts
                     CareAmount = 10,
                     TotalAmount = 5,
                     ClientAmount = 5,
-                    OrderContents = [new OrderContent { Amount = 10, ProductName = "Plateau", ProductType = Domain.Product.ProductType.Other } ]
+                    OrderContents = [new OrderContent { Amount = 10, ProductName = "Plateau", ProductType = Domain.Product.ProductType.Other }]
                 });
             DbContextMock.SaveChanges();
 
