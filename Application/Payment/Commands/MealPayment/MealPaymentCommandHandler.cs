@@ -38,7 +38,7 @@ public class MealPaymentCommandHandler : IRequestHandler<MealPaymentCommand, Req
 
     public async Task<RequestResult<MealPaymentResult>> Handle(MealPaymentCommand request, CancellationToken cancellationToken)
     {
-        var client = await _clientQueries.GetById(request.ClientId, cancellationToken);
+        var client = await _clientQueries.GetClientAsync(request.ClientId, cancellationToken);
         if (client == null) return new RequestResult<MealPaymentResult> { Message = "The client doesn't exist", StatusCodes = RequestStatusCodes.Status400BadRequest };
 
         var clientAccount = await _clientAccountQueries.GetByClientIdAsync(request.ClientId, cancellationToken);
