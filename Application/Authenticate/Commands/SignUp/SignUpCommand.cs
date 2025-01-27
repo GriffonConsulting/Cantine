@@ -8,6 +8,6 @@ namespace Application.Authenticate.Commands.SignUp
     {
         public required string Email { get; set; }
         public required string Password { get; set; }
-        public ClientRole ClientRole { get; set; }
+        public Guid RoleId { get; set; }
     }
 }

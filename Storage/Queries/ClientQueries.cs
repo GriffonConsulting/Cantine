@@ -9,7 +9,7 @@ namespace EntityFramework.Queries
 
         public Task<Client?> GetClientAsync(Guid id, CancellationToken cancellationToken = default)
         {
-            return DbContext.Set<Client>().Include(c => c.ClientRole).Where(c => c.Id == id).FirstOrDefaultAsync(cancellationToken);
+            return DbContext.Set<Client>().Include(c => c.Role).Where(c => c.Id == id).FirstOrDefaultAsync(cancellationToken);
         }
     }
 }

@@ -55,7 +55,7 @@ public class MealPaymentCommandHandler : IRequestHandler<MealPaymentCommand, Req
 
             if (product == null) return new RequestResult<MealPaymentResult> { Message = "Product not found", StatusCodes = RequestStatusCodes.Status400BadRequest };
 
-            orderContents.Add(new OrderContent { Amount = product.ProductPrice, ProductId = productId, ProductType = product.ProductType });
+            orderContents.Add(new OrderContent { Amount = product.ProductPrice, ProductId = productId, ProductType = product.ProductType, ProductName = product.ProductName });
         }
 
         await checkMealTrayAsync(products, orderContents, cancellationToken);
@@ -85,7 +85,8 @@ public class MealPaymentCommandHandler : IRequestHandler<MealPaymentCommand, Req
             CreatedOn = DateTime.UtcNow,
             ModifiedOn = DateTime.UtcNow,
             CareAmount = careAmount,
-            ClientAmount = clientAccount.Amount,
+            ClientId = request.ClientId,
+            ClientAmount = orderTotalAmount - careAmount,
             TotalAmount = orderTotalAmount
         }, cancellationToken);
 
@@ -98,6 +99,7 @@ public class MealPaymentCommandHandler : IRequestHandler<MealPaymentCommand, Req
                 OrderId = orderId,
                 Amount = orderContent.Amount,
                 ProductId = orderContent.ProductId,
+                ProductName = orderContent.ProductName
             }, cancellationToken);
         }
 
@@ -129,7 +131,7 @@ public class MealPaymentCommandHandler : IRequestHandler<MealPaymentCommand, Req
 
             var mealTray = await _productQueries.GetByProductCode("MealTray", cancellationToken);
             if (mealTray == null) throw new Exception("product MealTray not defined");
-            orderContents.Add(new OrderContent { Amount = mealTray.ProductPrice, ProductId = mealTray.Id, ProductType = mealTray.ProductType });
+            orderContents.Add(new OrderContent { Amount = mealTray.ProductPrice, ProductId = mealTray.Id, ProductType = mealTray.ProductType, ProductName = mealTray.ProductName });
         }
     }
 

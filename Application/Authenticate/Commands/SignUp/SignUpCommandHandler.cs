@@ -2,6 +2,7 @@
 using Domain.Authorization;
 using EntityFramework.Commands;
 using EntityFramework.Entities;
+using EntityFramework.Queries;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
 
@@ -23,7 +24,6 @@ namespace Application.Authenticate.Commands.SignUp
         public async Task<RequestResult> Handle(SignUpCommand request, CancellationToken cancellationToken)
         {
             var user = new IdentityUser { UserName = request.Email, Email = request.Email };
-
             var result = await _userManager.CreateAsync(user, request.Password);
 
             if (!result.Succeeded)
@@ -37,7 +37,7 @@ namespace Application.Authenticate.Commands.SignUp
             {
                 Id = Guid.Parse(userId),
                 Email = request.Email,
-                ClientRole = request.ClientRole,
+                RoleId = request.RoleId,
                 CreatedOn = DateTime.UtcNow,
                 ModifiedOn = DateTime.UtcNow,
             };
@@ -45,8 +45,7 @@ namespace Application.Authenticate.Commands.SignUp
 
             var newClientAccount = new ClientAccount
             {
-                Id = Guid.Parse(userId),
-                ClientId = newUser.Id,
+                ClientId = Guid.Parse(userId),
                 Amount = 0,
                 CreatedOn = DateTime.UtcNow,
                 ModifiedOn = DateTime.UtcNow,

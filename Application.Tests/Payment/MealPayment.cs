@@ -47,23 +47,23 @@ namespace Application.Tests.ClientAccounts
             var visitor = DbContextMock.Role.Add(new Role { Id = Guid.NewGuid(), ClientRole = ClientRole.Visitor, CanOverDraft = false });
 
             var internId = Guid.NewGuid();
-            DbContextMock.Client.Add(new Client { Id = internId, Email = "", ClientRole = ClientRole.Intern, Role = intern.Entity });
+            DbContextMock.Client.Add(new Client { Id = internId, Email = "", RoleId = intern.Entity.Id, Role = intern.Entity });
             DbContextMock.ClientAccount.Add(new ClientAccount { Amount = 5, ClientId = internId, });
 
             var providerId = Guid.NewGuid();
-            DbContextMock.Client.Add(new Client { Id = providerId, Email = "", ClientRole = ClientRole.Provider, Role = provider.Entity });
+            DbContextMock.Client.Add(new Client { Id = providerId, Email = "", RoleId = intern.Entity.Id, Role = provider.Entity });
             DbContextMock.ClientAccount.Add(new ClientAccount { Amount = 5, ClientId = providerId, });
 
             var vipId = Guid.NewGuid();
-            DbContextMock.Client.Add(new Client { Id = vipId, Email = "", ClientRole = ClientRole.Vip, Role = vip.Entity });
+            DbContextMock.Client.Add(new Client { Id = vipId, Email = "", RoleId = intern.Entity.Id, Role = vip.Entity });
             DbContextMock.ClientAccount.Add(new ClientAccount { Amount = 5, ClientId = vipId, });
 
             var traineeId = Guid.NewGuid();
-            DbContextMock.Client.Add(new Client { Id = traineeId, Email = "", ClientRole = ClientRole.Trainee, Role = trainee.Entity });
+            DbContextMock.Client.Add(new Client { Id = traineeId, Email = "", RoleId = intern.Entity.Id, Role = trainee.Entity });
             DbContextMock.ClientAccount.Add(new ClientAccount { Amount = 5, ClientId = traineeId, });
 
             var visitorId = Guid.NewGuid();
-            DbContextMock.Client.Add(new Client { Id = visitorId, Email = "", ClientRole = ClientRole.Visitor, Role = visitor.Entity });
+            DbContextMock.Client.Add(new Client { Id = visitorId, Email = "", RoleId = intern.Entity.Id, Role = visitor.Entity });
             DbContextMock.ClientAccount.Add(new ClientAccount { Amount = 5, ClientId = visitorId, });
             DbContextMock.SaveChanges();
         }
@@ -88,7 +88,7 @@ namespace Application.Tests.ClientAccounts
         public async Task Unknown_product_Should_Throw_BadRequestException()
         {
 
-            var client = await DbContextMock.Client.FirstOrDefaultAsync(c => c.ClientRole == ClientRole.Intern);
+            var client = await DbContextMock.Client.FirstOrDefaultAsync(c => c.Role.ClientRole == ClientRole.Intern);
 
             var response = await _mealPaymentCommandHandler.Handle(
                 new MealPaymentCommand()
@@ -105,7 +105,7 @@ namespace Application.Tests.ClientAccounts
         [Fact]
         public async Task Should_Throw_BadRequestException()
         {
-            var client = await DbContextMock.Client.FirstOrDefaultAsync(c => c.ClientRole == ClientRole.Intern);
+            var client = await DbContextMock.Client.FirstOrDefaultAsync(c => c.Role.ClientRole == ClientRole.Intern);
 
             var response = await _mealPaymentCommandHandler.Handle(
                 new MealPaymentCommand()
@@ -123,7 +123,7 @@ namespace Application.Tests.ClientAccounts
         [Fact]
         public async Task Should_Be_Ok()
         {
-            var client = await DbContextMock.Client.FirstOrDefaultAsync(c => c.ClientRole == ClientRole.Intern);
+            var client = await DbContextMock.Client.FirstOrDefaultAsync(c => c.Role.ClientRole == ClientRole.Intern);
             var plateau = await DbContextMock.Product.FirstOrDefaultAsync(p => p.ProductName == "Plateau");
 
             var response = await _mealPaymentCommandHandler.Handle(
@@ -141,7 +141,7 @@ namespace Application.Tests.ClientAccounts
         [Fact]
         public async Task Intern_With_Overdraft_Should_Be_Ok()
         {
-            var client = await DbContextMock.Client.FirstOrDefaultAsync(c => c.ClientRole == ClientRole.Intern);
+            var client = await DbContextMock.Client.FirstOrDefaultAsync(c => c.Role.ClientRole == ClientRole.Intern);
             var plateau = await DbContextMock.Product.FirstOrDefaultAsync(p => p.ProductName == "Plateau");
             var boisson = await DbContextMock.Product.FirstOrDefaultAsync(p => p.ProductName == "Boisson");
             var grandSaladeBar = await DbContextMock.Product.FirstOrDefaultAsync(p => p.ProductName == "Grand Salade Bar");
@@ -161,7 +161,7 @@ namespace Application.Tests.ClientAccounts
         [Fact]
         public async Task Provider_With_Overdraft_Should_Throw_BusinessException()
         {
-            var client = await DbContextMock.Client.FirstOrDefaultAsync(c => c.ClientRole == ClientRole.Provider);
+            var client = await DbContextMock.Client.FirstOrDefaultAsync(c => c.Role.ClientRole == ClientRole.Provider);
             await DbContextMock.SaveChangesAsync();
             var plateau = await DbContextMock.Product.FirstOrDefaultAsync(p => p.ProductName == "Plateau");
             var boisson = await DbContextMock.Product.FirstOrDefaultAsync(p => p.ProductName == "Boisson");
@@ -182,7 +182,7 @@ namespace Application.Tests.ClientAccounts
         [Fact]
         public async Task Vip_Should_Be_Ok()
         {
-            var client = await DbContextMock.Client.FirstOrDefaultAsync(c => c.ClientRole == ClientRole.Vip);
+            var client = await DbContextMock.Client.FirstOrDefaultAsync(c => c.Role.ClientRole == ClientRole.Vip);
             var plateau = await DbContextMock.Product.FirstOrDefaultAsync(p => p.ProductName == "Plateau");
             var boisson = await DbContextMock.Product.FirstOrDefaultAsync(p => p.ProductName == "Boisson");
             var grandSaladeBar = await DbContextMock.Product.FirstOrDefaultAsync(p => p.ProductName == "Grand Salade Bar");
@@ -202,7 +202,7 @@ namespace Application.Tests.ClientAccounts
         [Fact]
         public async Task Visitor_Should_Be_Ok()
         {
-            var client = await DbContextMock.Client.FirstOrDefaultAsync(c => c.ClientRole == ClientRole.Visitor);
+            var client = await DbContextMock.Client.FirstOrDefaultAsync(c => c.Role.ClientRole == ClientRole.Visitor);
             var boisson = await DbContextMock.Product.FirstOrDefaultAsync(p => p.ProductName == "Boisson");
 
             var response = await _mealPaymentCommandHandler.Handle(
@@ -220,7 +220,7 @@ namespace Application.Tests.ClientAccounts
         [Fact]
         public async Task Care_Amount_Should_Not_Exceed_TotalAmout_ok()
         {
-            var client = DbContextMock.Client.FirstOrDefault(c => c.ClientRole == ClientRole.Provider);
+            var client = DbContextMock.Client.FirstOrDefault(c => c.Role.ClientRole == ClientRole.Provider);
             var boisson = DbContextMock.Product.FirstOrDefault(p => p.ProductName == "Boisson");
 
             var response = await _mealPaymentCommandHandler.Handle(
@@ -238,7 +238,7 @@ namespace Application.Tests.ClientAccounts
         [Fact]
         public async Task Meal_Tray_Should_Cost_10_ok()
         {
-            var client = await DbContextMock.Client.FirstOrDefaultAsync(c => c.ClientRole == ClientRole.Intern);
+            var client = await DbContextMock.Client.FirstOrDefaultAsync(c => c.Role.ClientRole == ClientRole.Intern);
             var dessert = await DbContextMock.Product.FirstOrDefaultAsync(p => p.ProductType == ProductType.Dessert);
             var mainDish = await DbContextMock.Product.FirstOrDefaultAsync(p => p.ProductType == ProductType.MainDish);
             var bread = await DbContextMock.Product.FirstOrDefaultAsync(p => p.ProductType == ProductType.Bread);
