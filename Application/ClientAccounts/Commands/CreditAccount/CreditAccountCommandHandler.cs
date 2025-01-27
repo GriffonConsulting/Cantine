@@ -25,7 +25,7 @@ public class CreditAccountCommandHandler : IRequestHandler<CreditAccountCommand,
     {
         if (request.CreditAccountClientCommand.Amount <= 0) return new RequestResult<CreditAccountResult> { Message = "The credited amount must be greater than zero", StatusCodes = RequestStatusCodes.Status400BadRequest };
 
-        var clientAccount = await _clientAccountQueries.GetByClientIdAsync(request.CreditAccountClientCommand.ClientId);
+        var clientAccount = await _clientAccountQueries.GetByClientIdAsync(request.CreditAccountClientCommand.ClientId, cancellationToken);
 
         if (clientAccount == null) return new RequestResult<CreditAccountResult> { Message = "The client account doesn't exist", StatusCodes = RequestStatusCodes.Status400BadRequest };
 
