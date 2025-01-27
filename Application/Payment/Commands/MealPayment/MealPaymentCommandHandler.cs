@@ -1,9 +1,10 @@
-﻿using Application.ClientAccounts.Commands.CreditAccount;
-using Application.Common.Requests;
+﻿using Application.Common.Requests;
+using Domain.Product;
 using EntityFramework.Commands;
 using EntityFramework.Entities;
 using EntityFramework.Queries;
 using MediatR;
+using System.Threading;
 
 namespace Application.Payment.Commands.MealPayment;
 
@@ -47,7 +48,6 @@ public class MealPaymentCommandHandler : IRequestHandler<MealPaymentCommand, Req
         var products = await _productQueries.GetByProductsIdsAsync(request.MealPaymentCommandDto.ProductIds, cancellationToken);
         var orderContents = new List<OrderContent>();
         decimal orderTotalAmount = 0;
-        decimal careAmount = 0;
 
         foreach (var productId in request.MealPaymentCommandDto.ProductIds)
         {
@@ -55,26 +55,19 @@ public class MealPaymentCommandHandler : IRequestHandler<MealPaymentCommand, Req
 
             if (product == null) return new RequestResult<MealPaymentResult> { Message = "Product not found", StatusCodes = RequestStatusCodes.Status400BadRequest };
 
-            orderTotalAmount += product.ProductPrice;
-            orderContents.Add(new OrderContent { Amount = product.ProductPrice, ProductId = productId });
+            orderContents.Add(new OrderContent { Amount = product.ProductPrice, ProductId = productId, ProductType = product.ProductType });
         }
 
-        if (client.Role?.MealCareAmount != null)
-        {
-            if (client.Role?.MealCareAmount > orderTotalAmount)
-                careAmount = orderTotalAmount;
-            else
-                careAmount = (decimal)(client.Role?.MealCareAmount);
-        }
-        else if (client.Role?.MealCarePercent != null)
-        {
-            careAmount = (decimal)(orderTotalAmount * client.Role?.MealCarePercent / 100);
-        }
+        await checkMealTrayAsync(products, orderContents, cancellationToken);
+        orderTotalAmount = orderContents.Sum(oc => oc.Amount);
+
+        decimal careAmount = CalcCareAmount(client, orderTotalAmount);
 
         clientAccount.Amount -= orderTotalAmount - careAmount;
         clientAccount.ModifiedOn = DateTime.UtcNow;
 
         if (clientAccount.Amount < 0 && !client.Role.CanOverDraft) return new RequestResult<MealPaymentResult> { Message = "OverDraft", StatusCodes = RequestStatusCodes.Status400BadRequest };
+
 
         await _clientAccountCommands.UpdateEntityAsync(clientAccount, cancellationToken);
         await _clientAccountTransactionHistoryCommands.AddAsync(new ClientAccountTransactionHistory
@@ -94,7 +87,7 @@ public class MealPaymentCommandHandler : IRequestHandler<MealPaymentCommand, Req
             CareAmount = careAmount,
             ClientAmount = clientAccount.Amount,
             TotalAmount = orderTotalAmount
-        });
+        }, cancellationToken);
 
         foreach (var orderContent in orderContents)
         {
@@ -105,7 +98,7 @@ public class MealPaymentCommandHandler : IRequestHandler<MealPaymentCommand, Req
                 OrderId = orderId,
                 Amount = orderContent.Amount,
                 ProductId = orderContent.ProductId,
-            });
+            }, cancellationToken);
         }
 
         return new RequestResult<MealPaymentResult>
@@ -120,5 +113,42 @@ public class MealPaymentCommandHandler : IRequestHandler<MealPaymentCommand, Req
 
             StatusCodes = RequestStatusCodes.Status200OK
         };
+    }
+
+    private async Task checkMealTrayAsync(Product[] products, List<OrderContent> orderContents, CancellationToken cancellationToken)
+    {
+        if (orderContents.Any(oc => oc.ProductType == ProductType.MainDish)
+            && orderContents.Any(oc => oc.ProductType == ProductType.Dessert)
+            && orderContents.Any(oc => oc.ProductType == ProductType.Bread)
+            && orderContents.Any(oc => oc.ProductType == ProductType.Starter))
+        {
+            orderContents.FirstOrDefault(oc => oc.ProductType == ProductType.MainDish).Amount = 0;
+            orderContents.FirstOrDefault(oc => oc.ProductType == ProductType.Dessert).Amount = 0;
+            orderContents.FirstOrDefault(oc => oc.ProductType == ProductType.Bread).Amount = 0;
+            orderContents.FirstOrDefault(oc => oc.ProductType == ProductType.Starter).Amount = 0;
+
+            var mealTray = await _productQueries.GetByProductCode("MealTray", cancellationToken);
+            if (mealTray == null) throw new Exception("product MealTray not defined");
+            orderContents.Add(new OrderContent { Amount = mealTray.ProductPrice, ProductId = mealTray.Id, ProductType = mealTray.ProductType });
+        }
+    }
+
+
+    private static decimal CalcCareAmount(Client client, decimal orderTotalAmount)
+    {
+        decimal careAmount = 0;
+        if (client.Role?.MealCareAmount != null)
+        {
+            if (client.Role?.MealCareAmount > orderTotalAmount)
+                careAmount = orderTotalAmount;
+            else
+                careAmount = (decimal)(client.Role?.MealCareAmount);
+        }
+        else if (client.Role?.MealCarePercent != null)
+        {
+            careAmount = (decimal)(orderTotalAmount * client.Role?.MealCarePercent / 100);
+        }
+
+        return careAmount;
     }
 }
