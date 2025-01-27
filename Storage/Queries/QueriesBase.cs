@@ -1,9 +1,8 @@
-﻿using System.Linq.Expressions;
-using EntityFramework;
-using EntityFramework.Entities;
+﻿using EntityFramework.Entities;
 using EntityFramework.Extensions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Query;
+using System.Linq.Expressions;
 
 namespace EntityFramework.Queries
 {

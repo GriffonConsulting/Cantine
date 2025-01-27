@@ -5,7 +5,7 @@ namespace Application.ClientAccounts.Commands.CreditAccount;
 
 public class CreditAccountCommand : IRequest<RequestResult<CreditAccountResult>>
 {
-    public required Guid ProviderId { get; set; }
+    public required Guid UserId { get; set; }
     public required CreditClientCommandDto CreditAccountClientCommand { get; set; }
 }
 

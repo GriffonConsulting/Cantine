@@ -11,5 +11,5 @@ public class MealPaymentCommand : IRequest<RequestResult<MealPaymentResult>>
 
 public class MealPaymentCommandDto
 {
-    public required Guid[] ProducctIds { get; set; }
+    public required Guid[] ProductIds { get; set; }
 }

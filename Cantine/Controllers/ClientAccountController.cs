@@ -19,12 +19,12 @@ namespace Cantine.Controllers
         }
 
         [HttpPost("Credit", Name = "CreditAccount")]
-        [ProducesResponseType(typeof(RequestResult), RequestStatusCodes.Status200OK)]
-        [ProducesResponseType(typeof(RequestResult), RequestStatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(RequestResult<CreditAccountResult>), RequestStatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(RequestResult<CreditAccountResult>), RequestStatusCodes.Status400BadRequest)]
         [Authorize]
         public async Task<IActionResult> CreditAccount(CreditClientCommandDto creditAccountClientCommand, CancellationToken cancellationToken)
         {
-            var creditAccountResult = await _mediator.Send(new CreditAccountCommand { ProviderId = Request.UserId(), CreditAccountClientCommand = creditAccountClientCommand }, cancellationToken);
+            var creditAccountResult = await _mediator.Send(new CreditAccountCommand { UserId = Request.UserId(), CreditAccountClientCommand = creditAccountClientCommand }, cancellationToken);
 
             return new ObjectResult(creditAccountResult)
             {

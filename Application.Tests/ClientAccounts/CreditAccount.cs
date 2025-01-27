@@ -2,16 +2,17 @@ using Application.ClientAccounts.Commands.CreditAccount;
 using Application.Common.Requests;
 using EntityFramework.Commands;
 using EntityFramework.Entities;
+using EntityFramework.Queries;
 using Moq;
 
 namespace Application.Tests.ClientAccounts
 {
-    public class GetClientTests : UnitTestBase
+    public class CreditAccountTests : UnitTestBase
     {
         private readonly CreditAccountCommandHandler _creditAccountCommandHandler;
 
 
-        public GetClientTests()
+        public CreditAccountTests()
         {
             Mock<ClientAccountCommands> clientAccountCommands = new(DbContextMock);
             Mock<ClientAccountTransactionHistoryCommands> clientAccountTransactionHistoryCommands = new(DbContextMock);
@@ -20,12 +21,12 @@ namespace Application.Tests.ClientAccounts
         }
 
         [Fact]
-        public async Task zero_amount_Should_Throw_BadRequestException()
+        public async Task Zero_amount_Should_Throw_BadRequestException()
         {
             var response =  await _creditAccountCommandHandler.Handle(
                 new CreditAccountCommand() 
                 { 
-                    ProviderId = new Guid(), 
+                    UserId = new Guid(), 
                     CreditAccountClientCommand = new CreditClientCommandDto
                     {
                         ClientId = new Guid(),
@@ -36,12 +37,12 @@ namespace Application.Tests.ClientAccounts
         }
 
         [Fact]
-        public async Task negative_amount_Should_Throw_BadRequestException()
+        public async Task Negative_amount_Should_Throw_BadRequestException()
         {
             var response = await _creditAccountCommandHandler.Handle(
                 new CreditAccountCommand()
                 {
-                    ProviderId = new Guid(),
+                    UserId = new Guid(),
                     CreditAccountClientCommand = new CreditClientCommandDto
                     {
                         ClientId = new Guid(),
@@ -57,7 +58,7 @@ namespace Application.Tests.ClientAccounts
             var response = await _creditAccountCommandHandler.Handle(
                 new CreditAccountCommand()
                 {
-                    ProviderId = new Guid(),
+                    UserId = new Guid(),
                     CreditAccountClientCommand = new CreditClientCommandDto
                     {
                         ClientId = new Guid(),
@@ -78,7 +79,7 @@ namespace Application.Tests.ClientAccounts
             var response = await _creditAccountCommandHandler.Handle(
                 new CreditAccountCommand()
                 {
-                    ProviderId = new Guid(),
+                    UserId = new Guid(),
                     CreditAccountClientCommand = new CreditClientCommandDto
                     {
                         ClientId = clientId,

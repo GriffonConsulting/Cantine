@@ -1,6 +1,7 @@
 ﻿using Application.Common.Requests;
 using EntityFramework.Commands;
 using EntityFramework.Entities;
+using EntityFramework.Queries;
 using MediatR;
 
 namespace Application.ClientAccounts.Commands.CreditAccount;
@@ -24,7 +25,7 @@ public class CreditAccountCommandHandler : IRequestHandler<CreditAccountCommand,
     {
         if (request.CreditAccountClientCommand.Amount <= 0) return new RequestResult<CreditAccountResult> { Message = "The credited amount must be greater than zero", StatusCodes = RequestStatusCodes.Status400BadRequest };
 
-        var clientAccount = await _clientAccountQueries.GetByClientId(request.CreditAccountClientCommand.ClientId);
+        var clientAccount = await _clientAccountQueries.GetByClientIdAsync(request.CreditAccountClientCommand.ClientId);
 
         if (clientAccount == null) return new RequestResult<CreditAccountResult> { Message = "The client account doesn't exist", StatusCodes = RequestStatusCodes.Status400BadRequest };
 
@@ -39,7 +40,7 @@ public class CreditAccountCommandHandler : IRequestHandler<CreditAccountCommand,
                 ClientId = request.CreditAccountClientCommand.ClientId,
                 CreatedOn = DateTime.UtcNow,
                 ModifiedOn = DateTime.UtcNow,
-                ProviderId = request.ProviderId,
+                UserId = request.UserId,
             }, cancellationToken);
 
         return new RequestResult<CreditAccountResult> {

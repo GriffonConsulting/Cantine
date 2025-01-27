@@ -4,8 +4,9 @@
     {
         public Guid Id { get; set; }
         public Guid ClientId { get; set; }
-        public Guid ProviderId { get; set; }
+        public Guid UserId { get; set; }
         public decimal TransactionAmount { get; set; }
+        public decimal? CareAmount { get; set; }
         public decimal ClientNewAmount { get; set; }
         public DateTime CreatedOn { get; set; }
         public DateTime ModifiedOn { get; set; }
